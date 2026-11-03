@@ -37,7 +37,7 @@ function loadApp(){
 }
 test('complete app boots, calculator retains v14 mass/volume and unit conversions',()=>{
  const app=loadApp();
- assert.match(app.html,/v15-beta\.1/);
+ assert.match(app.html,/v15-beta\.2/);
  assert.equal(app.run('calc()'),10/3);
  app.run("changeDesired(0,'1');calc()");
  assert.ok(Math.abs(app.run('lastCalc.drawMl')-.3)<1e-10);

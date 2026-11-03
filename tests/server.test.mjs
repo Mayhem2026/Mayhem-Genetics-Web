@@ -45,3 +45,28 @@ test('account validation, throttling and missing provider fail closed',async t=>
  for(let i=0;i<9;i++)await f.post('/api/auth/login',{...credentials,password:'wrong-long-password'});
  assert.equal((await f.post('/api/auth/login',credentials)).status,429);
 });
+test('changing password revokes all sessions; deletion requires reauthentication and cascades',async t=>{
+ const f=await fixture(t);
+ let r=await f.post('/api/auth/register',credentials),cookie=r.headers.get('set-cookie');
+ assert.equal((await f.post('/api/auth/delete',{password:'not-the-password'},cookie)).status,401);
+ const nextPassword='a-different-long-password';
+ assert.equal((await f.post('/api/auth/password',{password:credentials.password,newPassword:nextPassword},cookie)).status,200);
+ assert.equal((await fetch(f.url+'/api/me',{headers:{Cookie:cookie}})).status,401);
+ assert.equal((await f.post('/api/auth/login',credentials)).status,401);
+ r=await f.post('/api/auth/login',{...credentials,password:nextPassword});cookie=r.headers.get('set-cookie');
+ assert.equal(r.status,200);
+ assert.equal((await f.post('/api/auth/delete',{password:nextPassword},cookie)).status,200);
+ assert.equal(f.db.prepare('SELECT count(*) AS n FROM users').get().n,0);
+ assert.equal(f.db.prepare('SELECT count(*) AS n FROM sessions').get().n,0);
+});
+test('sandbox verification prevents cross-account replay and cannot unlock production AI',async t=>{
+ let signedAt=Date.now();
+ const f=await fixture(t,{verifyStore:async request=>({verified:true,platform:request.platform,environment:'sandbox',productId:request.productId,userId:request.userId,originalTransactionId:'same-purchase',expiresAt:Date.now()+60000,signedAt,revoked:false})});
+ const cookie=(await f.post('/api/auth/register',credentials)).headers.get('set-cookie');
+ const request={platform:'google',receipt:'opaque-token',planId:'annual',premium:true};
+ let r=await f.post('/api/premium/verify',request,cookie);assert.equal(r.status,200);assert.equal((await r.json()).productionPremium,false);
+ assert.equal((await f.post('/api/premium/verify',request,cookie)).status,409);
+ const other=(await f.post('/api/auth/register',{...credentials,email:'other@example.com'})).headers.get('set-cookie');signedAt++;
+ assert.equal((await f.post('/api/premium/verify',request,other)).status,409);
+ assert.equal((await f.post('/api/nutrition/analyze',{image:'data:image/png;base64,YQ=='},cookie)).status,403);
+});

@@ -1,9 +1,15 @@
 name: Friends and Family Beta
 on:
   push:
-    branches: ['dev/friends-family-beta']
+    branches: ['dev/**']
   pull_request:
   workflow_dispatch:
+    inputs:
+      reviewed_beta:
+        description: 'Publish only after the owner has approved this exact tested commit'
+        required: true
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -21,12 +27,12 @@ jobs:
       - name: Package browser beta only
         run: |
           mkdir -p dist
-          cp index.html beta-core.js mayhem_logo.jpg dist/
+          cp index.html beta-core.js franklyn.js franklyn-ui.js mayhem_logo.jpg dist/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/dev/friends-family-beta'
+    if: github.event_name == 'workflow_dispatch' && inputs.reviewed_beta == true && startsWith(github.ref, 'refs/heads/dev/')
     needs: test
     runs-on: ubuntu-latest
     permissions:
