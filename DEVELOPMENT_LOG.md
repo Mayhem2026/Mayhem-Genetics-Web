@@ -47,3 +47,10 @@
 - Confirmed Web and Android PR checks passed. Android PR #2 merged to main as `0b05258987bdc9946137f6449cb25b76f83ddb78`. Existing v14 and tested-beta backup refs are retained.
 - Web publication plumbing now allows a main-branch push only when its commit message starts with `Publish approved Friends & Family Beta`, or the existing explicit reviewed-beta manual action. Ordinary dev pushes/PRs do not deploy.
 - This entry records authorization and the publication attempt, not deployment success or completed physical-device QA. Backend hosting, email verification/recovery, live AI/store adapters, iOS builds and Samsung camera/export QA remain outstanding.
+
+### Publication result
+
+- Web PR #1 merged as `c2b1f66c9df930c10a2f1f6b9b9d555be4390b9b` after the final checks passed.
+- Approved publication workflow 41657802153 completed its test and deploy jobs successfully. Returned environment URL: https://mayhem2026.github.io/Mayhem-Genetics-Web/ . The existing Pages build workflow 41657801235 also succeeded. Public-page content could not be independently read through the web lookup tool; device/browser QA remains outstanding.
+- Android main workflow 41657663609 completed successfully. Beta debug APK artifact: 13240901452.
+- No store release, real payments, paid provider setup or credential exposure was performed. Accounts and live Nutrition/Franklyn AI remain unconfigured on the static beta host. v14 and the prior tested-beta backup refs remain intact.
