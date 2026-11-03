@@ -1,7 +1,7 @@
 name: Friends and Family Beta
 on:
   push:
-    branches: ['dev/**']
+    branches: [main, 'dev/**']
   pull_request:
   workflow_dispatch:
     inputs:
@@ -32,7 +32,7 @@ jobs:
         with:
           path: dist
   deploy:
-    if: github.event_name == 'workflow_dispatch' && inputs.reviewed_beta == true && startsWith(github.ref, 'refs/heads/dev/')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Publish approved Friends & Family Beta')) || (github.event_name == 'workflow_dispatch' && inputs.reviewed_beta == true && startsWith(github.ref, 'refs/heads/dev/'))
     needs: test
     runs-on: ubuntu-latest
     permissions:
