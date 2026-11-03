@@ -1,0 +1,47 @@
+name: Friends and Family Beta
+on:
+  push:
+    branches: [main, 'dev/**']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      reviewed_beta:
+        description: 'Publish only after the owner has approved this exact tested commit'
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: friends-family-beta-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/*.cjs tests/*.mjs
+      - name: Package browser beta only
+        run: |
+          mkdir -p dist
+          cp index.html beta-core.js franklyn.js franklyn-ui.js mayhem_logo.jpg dist/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Publish approved Friends & Family Beta')) || (github.event_name == 'workflow_dispatch' && inputs.reviewed_beta == true && startsWith(github.ref, 'refs/heads/dev/'))
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish beta
+        id: deployment
+        uses: actions/deploy-pages@v4
