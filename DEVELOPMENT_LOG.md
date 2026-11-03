@@ -40,3 +40,10 @@
 - Publish the reviewed Friends & Family Beta after QA and resolution of Pages settings.
 - Any paid hosting, email or AI provider plan, paid Apple enrollment, or other new charge.
 - Store submissions and real payment activation, after sandbox verification and release review.
+
+## 2026-11-03 — owner-approved beta advancement
+
+- Owner instructed “proceed” after the draft PR/test report. Approval applies to advancing the reviewed beta and attempting publication; real payments and new paid services remain on hold.
+- Confirmed Web and Android PR checks passed. Android PR #2 merged to main as `0b05258987bdc9946137f6449cb25b76f83ddb78`. Existing v14 and tested-beta backup refs are retained.
+- Web publication plumbing now allows a main-branch push only when its commit message starts with `Publish approved Friends & Family Beta`, or the existing explicit reviewed-beta manual action. Ordinary dev pushes/PRs do not deploy.
+- This entry records authorization and the publication attempt, not deployment success or completed physical-device QA. Backend hosting, email verification/recovery, live AI/store adapters, iOS builds and Samsung camera/export QA remain outstanding.
