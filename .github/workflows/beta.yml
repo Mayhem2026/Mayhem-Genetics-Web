@@ -27,7 +27,7 @@ jobs:
       - name: Package browser beta only
         run: |
           mkdir -p dist
-          cp index.html beta-core.js franklyn.js franklyn-ui.js mayhem_logo.jpg dist/
+          cp index.html beta-core.js franklyn.js franklyn-ui.js research-libraries.js mayhem_logo.jpg dist/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
