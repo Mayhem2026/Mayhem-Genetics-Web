@@ -28,3 +28,13 @@ test('Browser scan has honest fallback and manual UPC lookup',()=>{
   assert.match(html,/Enter a valid 8/);
   assert.match(html,/id="barcodeInput"/);
 });
+
+test('Safari barcode scanner has decoder fallback with pinned integrity and auto-stop',()=>{
+  assert.match(html,/function loadBrowserBarcodeLibrary\(\)/);
+  assert.match(html,/html5-qrcode\/2\.3\.8\/html5-qrcode\.min\.js/);
+  assert.match(html,/sha512-r6rDA7W6ZeQhvl8S7yRVQUKVHde/);
+  assert.match(html,/startBrowserBarcodeScanner\(generation\)/);
+  assert.match(html,/useBarCodeDetectorIfSupported:false/);
+  assert.match(html,/barcodeScanRegion/);
+  assert.match(html,/scanner\.stop\(\)/);
+});
