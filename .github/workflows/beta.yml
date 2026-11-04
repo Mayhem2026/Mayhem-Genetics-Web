@@ -28,6 +28,7 @@ jobs:
         run: |
           mkdir -p dist
           cp index.html beta-core.js franklyn.js franklyn-ui.js research-libraries.js mayhem_logo.jpg dist/
+          cp manifest.webmanifest iphone-beta.html ios-beta-icon.svg dist/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
