@@ -1,0 +1,19 @@
+{
+  "name": "Mayhem Genetics — Friends & Family Beta",
+  "short_name": "Mayhem Genetics",
+  "description": "Peptide research references and fitness tracking. Friends and family beta.",
+  "id": "./",
+  "start_url": "./?source=ios-home-screen",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050507",
+  "theme_color": "#b71d2b",
+  "icons": [
+    {
+      "src": "./ios-beta-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
