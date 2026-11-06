@@ -1,3 +1,4 @@
+import {createNutritionProvider} from './nutrition-provider.mjs';
 import {plans,verifySandboxPurchase} from './premium.mjs';
 import {createServer} from 'node:http';
 import {DatabaseSync} from 'node:sqlite';
@@ -138,6 +139,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const origin = process.env.APP_ORIGIN;
   if (!origin?.startsWith('https://')) throw Error('Set APP_ORIGIN to the HTTPS origin served by your reverse proxy');
   if (!process.env.MAYHEM_DATABASE) throw Error('Set MAYHEM_DATABASE to a durable private SQLite path');
-  const app = createApp({database:process.env.MAYHEM_DATABASE,origin});
+  const analyze = createNutritionProvider({apiKey:process.env.OPENAI_API_KEY,model:process.env.MAYHEM_NUTRITION_MODEL});
+  const app = createApp({database:process.env.MAYHEM_DATABASE,origin,analyze});
   app.server.listen(Number(process.env.PORT || 3000),'127.0.0.1');
 }

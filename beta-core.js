@@ -48,7 +48,19 @@
     requireValue(url.protocol === 'https:' && !url.username && !url.password && !url.search && !url.hash, 'Use an HTTPS endpoint without credentials, query strings, or fragments');
     return url.href;
   }
-  const api = Object.freeze({nutrition, backup, endpoint});
+  // Keep a single nutrition basis: never mix per-serving and per-100g values.
+  function barcodeNutrition(product) {
+    const n = product.nutriments || {};
+    const keys = ['energy-kcal','proteins','carbohydrates','fat'];
+    const complete = suffix => keys.every(k => finite(n[k + suffix]));
+    let suffix = complete('_serving') ? '_serving' : complete('_100g') ? '_100g' : null;
+    if (!suffix) return null;
+    const name = product.product_name || product.product_name_en || 'Scanned food';
+    return {name, basis:suffix === '_serving' ? '1 serving' : '100 g',
+      calories:n['energy-kcal'+suffix], protein:n['proteins'+suffix],
+      carbs:n['carbohydrates'+suffix], fat:n['fat'+suffix]};
+  }
+  const api = Object.freeze({nutrition, backup, endpoint, barcodeNutrition});
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.MayhemBeta = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
